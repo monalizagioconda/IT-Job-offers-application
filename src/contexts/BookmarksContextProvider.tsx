@@ -1,10 +1,20 @@
 import { createContext } from "react";
-import { useLocalStorage } from "../components/lib/hooks";
+import { useJobItems, useLocalStorage } from "../components/lib/hooks";
+import { JobItemExpanded } from "../components/lib/types";
 
-export const BookmarksContext = createContext(null);
+type BookmarksContext = {
+  bookmarkedIds: number[];
+  handleToggleBookmark: (id: number) => void;
+  bookmarkedJobItems: JobItemExpanded[];
+  isLoading: boolean;
+};
 
-export default function BookmarksContextProvider({ children }) {
-  const [bookmarkedIds, setBookmarkedIds] = useLocalStorage("bookmarkedIds", []);
+export const BookmarksContext = createContext<BookmarksContext | null>(null);
+
+export default function BookmarksContextProvider({ children }: { children: React.ReactNode }) {
+  const [bookmarkedIds, setBookmarkedIds] = useLocalStorage<number[]>("bookmarkedIds", []);
+
+  const { jobItems: bookmarkedJobItems, isLoading } = useJobItems(bookmarkedIds);
 
   const handleToggleBookmark = (id: number) => {
     if (bookmarkedIds.includes(id)) {
@@ -19,6 +29,8 @@ export default function BookmarksContextProvider({ children }) {
       value={{
         bookmarkedIds,
         handleToggleBookmark,
+        bookmarkedJobItems,
+        isLoading,
       }}
     >
       {children}
