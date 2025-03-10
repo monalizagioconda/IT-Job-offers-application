@@ -47,11 +47,7 @@ export default function JobItemsContextProvider({ children }: { children: React.
 
   // event handlers / actions
   const handleChangePage = useCallback((direction: PageDirection) => {
-    if (direction === "next") {
-      setCurrentPage(prev => prev + 1);
-    } else if (direction === "previous") {
-      setCurrentPage(prev => prev - 1);
-    }
+    setCurrentPage(prev => prev + (direction === "next" ? 1 : -1));
   }, []);
   const handleChangeSortBy = useCallback((newSortBy: SortBy) => {
     setCurrentPage(1);
